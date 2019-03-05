@@ -1,19 +1,17 @@
 const EventEmitter = require('events');
-const SensorTag = require('sensortag');
 const MovingAverage = require('moving-average');
 const logger = require('./logger');
-
 
 const accelerometerPeriod = 200;
 const accelerometerPrecision = 2;
 const movingAverageTimeInterval = 2000;
 const accelerometerUpdateMinInterval = 100;
 
-var safeCallback = function (callback) {
+const safeCallback = function (callback) {
     if (typeof callback == 'function') {
         callback()
     }
-}
+};
 
 class Sensor extends EventEmitter {
 
@@ -37,13 +35,16 @@ class Sensor extends EventEmitter {
     }
 
     addListeners() {
-        var _this = this;
+        const _this = this;
+
         if (this.hasAddedListeners) {
             return;
         }
+
         this.hasAddedListeners = true;
+
         this.sensorTag.on('accelerometerChange', (x, y, z) => {
-            var timestamp = Date.now();
+            const timestamp = Date.now();
             this.movingAverageX.push(timestamp, x);
             this.movingAverageY.push(timestamp, y);
             this.movingAverageZ.push(timestamp, z);
@@ -67,11 +68,13 @@ class Sensor extends EventEmitter {
     }
 
     start(callback) {
-        var _this = this;
+        const _this = this;
+
         if (this.hasStarted) {
             return;
         }
         this.hasStarted = true;
+
         this.sensorTag.enableAccelerometer(function (error) {
             logger.debug('Sensor.start - set enableAccelerometer');
             if (error) {

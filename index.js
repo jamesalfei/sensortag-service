@@ -1,9 +1,9 @@
-var io = require('socket.io')();
-var SensorTag = require('sensortag');
-var Sensor = require('./sensor');
-var logger = require('./logger');
+const io = require('socket.io')();
+const SensorTag = require('sensortag');
+const Sensor = require('./sensor');
+const logger = require('./logger');
 
-var sensors = [];
+const sensors = [];
 
 function updateSensors(target) {
     target.emit('UPDATE_SENSORS', sensors.map(sensor => sensor.getId()));
@@ -24,9 +24,10 @@ function updateAccelerometerChange(target, sensor, x, y, z) {
 
 function onDiscover(sensorTag) {
     console.log('onDiscover:', sensorTag.uuid);
+
     sensorTag.connectAndSetUp(function () {
         logger.info('on connectAndSetUp: ', sensorTag.uuid);
-        var sensor = new Sensor(sensorTag);
+        const sensor = new Sensor(sensorTag);
         sensors.push(sensor);
         updateSensors(io);
 

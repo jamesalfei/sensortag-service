@@ -1,7 +1,8 @@
-var SensorTag = require('sensortag');
+const SensorTag = require('sensortag');
 
 function onDiscover(sensorTag) {
     console.log('discovered: ' + sensorTag);
+
     sensorTag.connectAndSetUp(function () {
         console.log('waiting for button press ...');
 
