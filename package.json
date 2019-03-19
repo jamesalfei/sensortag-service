@@ -2,9 +2,10 @@
   "name": "sensortag-test",
   "version": "1.0.0",
   "description": "",
-  "main": "app/test.js",
+  "main": "app/server.js",
   "scripts": {
-    "postinstall": "sed -i \"\" s/\\'noble\\'/\\'noble-mac\\'/ ./node_modules/noble-device/lib/util.js"
+    "postinstall": "sed -i \"\" s/\\'noble\\'/\\'noble-mac\\'/ ./node_modules/noble-device/lib/util.js",
+    "start": "node app/server.js"
   },
   "author": "",
   "license": "ISC",

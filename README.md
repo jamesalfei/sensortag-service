@@ -7,5 +7,5 @@ npm install
 
 ## Run server
 ```
-node operations.js
+npm start
 ```
