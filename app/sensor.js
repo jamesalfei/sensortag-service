@@ -107,8 +107,6 @@ class Sensor extends EventEmitter {
     stop(callback) {
         this.sensorTag.unnotifyAccelerometer(safeCallback(callback));
     }
-
 }
-
 
 module.exports = Sensor;

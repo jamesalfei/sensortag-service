@@ -1,5 +1,4 @@
 const io = require('socket.io')();
-const SensorTag = require('sensortag');
 const Sensor = require('./sensor');
 const logger = require('./logger');
 
@@ -15,18 +14,22 @@ function updateButton(target, sensor) {
 
 function updateAccelerometerChange(target, sensor, x, y, z) {
     target.emit('ACCELEROMETER_CHANGE', {
-        sensorId: sensor.getId(),
-        x,
-        y,
-        z
+        sensorId: sensor.getId(), x, y, z
     });
 }
 
-function onDiscover(sensorTag) {
+exports.onDiscover = function(sensorTag) {
     console.log('onDiscover:', sensorTag.uuid);
 
     sensorTag.connectAndSetUp(function () {
         logger.info('on connectAndSetUp: ', sensorTag.uuid);
+
+        sensorTag.readDeviceName(function (error, deviceName) {
+            console.log('Connected to device: ' + deviceName);
+        });
+        sensorTag.readBatteryLevel(function (error, batteryLevel) {
+            console.log('Current battery level: ' + batteryLevel);
+        });
 
         const sensor = new Sensor(sensorTag);
         sensors.push(sensor);
@@ -45,9 +48,7 @@ function onDiscover(sensorTag) {
         });
 
     });
-}
-
-SensorTag.discoverAll(onDiscover);
+};
 
 io.on('connection', socket => {
     logger.info('Socket client connected');

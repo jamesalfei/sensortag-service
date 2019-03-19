@@ -2,7 +2,7 @@
   "name": "sensortag-test",
   "version": "1.0.0",
   "description": "",
-  "main": "test.js",
+  "main": "app/test.js",
   "scripts": {
     "postinstall": "sed -i \"\" s/\\'noble\\'/\\'noble-mac\\'/ ./node_modules/noble-device/lib/util.js"
   },
@@ -10,12 +10,14 @@
   "license": "ISC",
   "dependencies": {
     "async": "^2.6.1",
+    "express": "^4.16.4",
     "moving-average": "^1.0.0",
     "noble": "git+https://github.com/tomcollins/noble",
     "noble-mac": "git+https://github.com/Timeular/noble-mac.git#0.0.4",
     "sensortag": "git+https://github.com/tomcollins/node-sensortag",
     "socket.io": "^2.1.1",
-    "winston": "^3.1.0"
+    "winston": "^3.1.0",
+    "body-parser": "^1.18.3"
   },
   "resolutions": {
     "sensortag": "git+https://github.com/tomcollins/node-sensortag",

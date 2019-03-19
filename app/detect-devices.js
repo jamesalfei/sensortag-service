@@ -18,6 +18,6 @@ function onDiscover(sensorTag) {
 
 SensorTag.discoverAll(onDiscover);
 
-setTimeout(function() {
+setTimeout(function () {
     SensorTag.stopDiscoverAll(onDiscover);
 }, 10000);

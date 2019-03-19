@@ -20,9 +20,11 @@ const logger = createLogger({
     exitOnError: false
 });
 
-module.exports = logger;
-module.exports.stream = {
-    write: function (message, encoding) {
-        logger.info(message);
+module.exports = {
+    logger: logger,
+    stream: {
+        write: function (message, encoding) {
+            logger.info(message);
+        }
     }
 };

@@ -7,5 +7,5 @@ npm install
 
 ## Run server
 ```
-node index.js
+node operations.js
 ```
