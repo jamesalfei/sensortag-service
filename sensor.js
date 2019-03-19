@@ -27,7 +27,6 @@ class Sensor extends EventEmitter {
         this.movingAverageX = MovingAverage(movingAverageTimeInterval)
         this.movingAverageY = MovingAverage(movingAverageTimeInterval)
         this.movingAverageZ = MovingAverage(movingAverageTimeInterval)
-
     }
 
     getId() {
@@ -40,7 +39,6 @@ class Sensor extends EventEmitter {
         if (this.hasAddedListeners) {
             return;
         }
-
         this.hasAddedListeners = true;
 
         this.sensorTag.on('accelerometerChange', (x, y, z) => {
@@ -48,17 +46,17 @@ class Sensor extends EventEmitter {
             this.movingAverageX.push(timestamp, x);
             this.movingAverageY.push(timestamp, y);
             this.movingAverageZ.push(timestamp, z);
-            // if (timestamp - this.accelerometerUpdateTimestamp > accelerometerUpdateMinInterval) {
-            this.accelerometerUpdateTimestamp = timestamp;
-            x = this.movingAverageX.movingAverage().toFixed(accelerometerPrecision);
-            y = this.movingAverageY.movingAverage().toFixed(accelerometerPrecision);
-            z = this.movingAverageZ.movingAverage().toFixed(accelerometerPrecision);
-            logger.debug('Sensor - on accelerometerChange', x, y, z);
-            _this.emit("accelerometerChange", x, y, z);
-            // }
+            if (timestamp - this.accelerometerUpdateTimestamp > accelerometerUpdateMinInterval) {
+                this.accelerometerUpdateTimestamp = timestamp;
+                x = this.movingAverageX.movingAverage().toFixed(accelerometerPrecision);
+                y = this.movingAverageY.movingAverage().toFixed(accelerometerPrecision);
+                z = this.movingAverageZ.movingAverage().toFixed(accelerometerPrecision);
+                logger.debug('Sensor - on accelerometerChange', x, y, z);
+                _this.emit("accelerometerChange", x, y, z);
+            }
         });
 
-        this.sensorTag.on('simpleKeyChange', function (left, right, reedRelay) {
+        this.sensorTag.on('simpleKeyChange', function (left, right, _) {
             // console.log(this.id, this.uuid, left, right, reedRelay);
             logger.debug('Sensor - on simpleKeyChange');
             if (right) {
@@ -77,14 +75,17 @@ class Sensor extends EventEmitter {
 
         this.sensorTag.enableAccelerometer(function (error) {
             logger.debug('Sensor.start - set enableAccelerometer');
+
             if (error) {
                 console.error(error);
             }
+
             _this.sensorTag.setAccelerometerPeriod(accelerometerPeriod, function (error) {
                 logger.debug('Sensor.start - set accelerometerPeriod');
                 if (error) {
                     logger.error(error);
                 }
+
                 _this.sensorTag.notifyAccelerometer(function (error) {
                     console.log('Sensor.start - set notifyAccelerometer');
                     if (error) {

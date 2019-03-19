@@ -27,15 +27,18 @@ function onDiscover(sensorTag) {
 
     sensorTag.connectAndSetUp(function () {
         logger.info('on connectAndSetUp: ', sensorTag.uuid);
+
         const sensor = new Sensor(sensorTag);
         sensors.push(sensor);
         updateSensors(io);
 
         sensor.start();
+
         sensor.on('accelerometerChange', (x, y, z) => {
             logger.debug('accelerometerChange', x, y, z);
             updateAccelerometerChange(io, sensor, x, y, z);
         });
+
         sensor.on('buttonPress', () => {
             logger.debug('buttonPress');
             updateButton(io, sensor);

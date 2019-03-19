@@ -1,12 +1,12 @@
 const SensorTag = require('sensortag');
 
 function onDiscover(sensorTag) {
-    console.log('discovered: ' + sensorTag);
+    console.log('Discovered: ' + sensorTag);
 
     sensorTag.connectAndSetUp(function () {
         console.log('waiting for button press ...');
 
-        sensorTag.on('simpleKeyChange', function (left, right, reedRelay) {
+        sensorTag.on('simpleKeyChange', function (_, _, _) {
             console.log(this.id, this.uuid);
         });
 
@@ -18,4 +18,6 @@ function onDiscover(sensorTag) {
 
 SensorTag.discoverAll(onDiscover);
 
-//SensorTag.stopDiscoverAll(onDiscover);
+setTimeout(function() {
+    SensorTag.stopDiscoverAll(onDiscover);
+}, 10000);

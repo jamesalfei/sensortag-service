@@ -1,10 +1,8 @@
-var util = require('util');
+const async = require('async');
 
-var async = require('async');
+const SensorTag = require('sensortag');
 
-var SensorTag = require('sensortag');
-
-var USE_READ = true;
+const USE_READ = true;
 
 SensorTag.discover(function (sensorTag) {
     console.log('discovered: ' + sensorTag);
@@ -407,6 +405,5 @@ SensorTag.discover(function (sensorTag) {
                 console.log('disconnect');
                 sensorTag.disconnect(callback);
             }
-        ]
-    );
+        ]);
 });
