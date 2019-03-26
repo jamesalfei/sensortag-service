@@ -1,15 +1,16 @@
 const index = require('../operations');
-const devices = require('../detect-devices');
 
-//POST up to endpoint
-//CONNECT to sensor
-//GET historic data
-//DISCONNECT from sensor
-
-module.exports = function(app) {
+module.exports = function (app) {
     app.post('/start', (req, res) => {
-        index.connectSensor("5fbb37b58ad14d25babfbf6b66cdb40c");
-        res.send("Connecting to FlyingLow sensor...");
+        index.connectSensor("5fbb37b58ad14d25babfbf6b66cdb40c", function (err) {
+            res.send("Connected to FlyingLow sensor");
+        });
+    });
+
+    app.post('/startAlternative', (req, res) => {
+        index.connectSensor("c76b64de16c9422daa472611b5aa5543", function (err) {
+            res.send("Connected to FlyingLow alternative sensor");
+        });
     });
 
     app.post('/stop', (req, res) => {
@@ -26,8 +27,6 @@ module.exports = function(app) {
         console.log('Recording stopped');
         res.send("Recording stopped");
     });
-
-
 
     app.get('/data', (req, res) => {
         index.getDataFromSensors(function (accelerometer, gyro) {

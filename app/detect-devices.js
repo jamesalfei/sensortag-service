@@ -2,7 +2,7 @@ const io = require('socket.io')();
 const SensorTag = require('sensortag');
 const Sensor = require('./sensor');
 const async = require('async');
-const sprintf=require("sprintf-js").sprintf;
+const sprintf = require("sprintf-js").sprintf;
 
 const sensors = [];
 
@@ -36,7 +36,7 @@ function getDataFromSensor(outCallback) {
 
     const sensorTag = sensors[0];
     async.series([
-        function(callback) {
+        function (callback) {
             accelerometerData = {
                 x: sensorTag.movingAverageX.movingAverage().toFixed(sensorTag.getPrecision()),
                 y: sensorTag.movingAverageY.movingAverage().toFixed(sensorTag.getPrecision()),
@@ -52,7 +52,7 @@ function getDataFromSensor(outCallback) {
             };
             callback();
         },
-        function() {
+        function () {
             outCallback(accelerometerData, gyroData)
         }
     ]);
@@ -65,9 +65,6 @@ function onDiscover(sensorTag) {
 
         console.log('on connectAndSetUp: ', sensorTag.uuid);
 
-        sensorTag.readDeviceName(function (error, deviceName) {
-            console.log('Connected to device: ' + deviceName);
-        });
         sensorTag.readBatteryLevel(function (error, batteryLevel) {
             console.log('Current battery level: ' + batteryLevel);
         });
@@ -92,12 +89,11 @@ function onDiscover(sensorTag) {
             console.log('buttonPress');
             updateButton(io, sensor);
         });
-
     });
 }
 
 module.exports = {
-    getSensors: function() {
+    getSensors: function () {
         return sensors;
     },
     updateSensors: updateSensors,
