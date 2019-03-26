@@ -2,15 +2,13 @@ const index = require('../operations');
 
 module.exports = function (app) {
     app.post('/start', (req, res) => {
-        index.connectSensor("5fbb37b58ad14d25babfbf6b66cdb40c", function (err) {
-            res.send("Connected to FlyingLow sensor");
-        });
+        index.connectSensor("5fbb37b58ad14d25babfbf6b66cdb40c");
+        res.send("Connected to FlyingLow sensor");
     });
 
     app.post('/startAlternative', (req, res) => {
-        index.connectSensor("c76b64de16c9422daa472611b5aa5543", function (err) {
-            res.send("Connected to FlyingLow alternative sensor");
-        });
+        index.connectSensor("c76b64de16c9422daa472611b5aa5543");
+        res.send("Connected to FlyingLow alternative sensor");
     });
 
     app.post('/stop', (req, res) => {
