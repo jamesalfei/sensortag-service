@@ -23,9 +23,9 @@ class Sensor extends EventEmitter {
         this.rightButtonPressed = false;
         this.addListeners();
         this.accelerometerUpdateTimestamp = 0;
-        this.movingAverageX = MovingAverage(movingAverageTimeInterval)
-        this.movingAverageY = MovingAverage(movingAverageTimeInterval)
-        this.movingAverageZ = MovingAverage(movingAverageTimeInterval)
+        this.movingAverageX = MovingAverage(movingAverageTimeInterval);
+        this.movingAverageY = MovingAverage(movingAverageTimeInterval);
+        this.movingAverageZ = MovingAverage(movingAverageTimeInterval);
     }
 
     getId() {
@@ -52,6 +52,10 @@ class Sensor extends EventEmitter {
                 z = this.movingAverageZ.movingAverage().toFixed(accelerometerPrecision);
                 _this.emit("accelerometerChange", x, y, z);
             }
+        });
+
+        this.sensorTag.on('gyroscopeChange', (x, y, z) => {
+            _this.emit("gyroscopeChange", x, y, z);
         });
 
         this.sensorTag.on('simpleKeyChange', function (left, right, _) {
@@ -90,18 +94,42 @@ class Sensor extends EventEmitter {
                     safeCallback(callback);
                 });
             });
+        });
 
-            _this.sensorTag.notifySimpleKey(function (error) {
-                console.debug('Sensor.start - set notifySimpleKey');
+        this.sensorTag.enableGyroscope(function (error) {
+            console.debug('Sensor.start - set enableGyro');
+
+            if (error) {
+                console.error(error);
+            }
+
+            _this.sensorTag.setGyroscopePeriod(accelerometerPeriod, function (error) {
+                console.debug('Sensor.start - set gyroPeriod');
                 if (error) {
                     console.error(error);
                 }
+
+                _this.sensorTag.notifyGyroscope(function (error) {
+                    console.log('Sensor.start - set notifyGyro');
+                    if (error) {
+                        console.error(error);
+                    }
+                    safeCallback(callback);
+                });
             });
+        });
+
+        _this.sensorTag.notifySimpleKey(function (error) {
+            console.debug('Sensor.start - set notifySimpleKey');
+            if (error) {
+                console.error(error);
+            }
         });
     }
 
     stop(callback) {
         this.sensorTag.unnotifyAccelerometer(safeCallback(callback));
+        this.sensorTag.unnotifyGyroscope(safeCallback(callback));
     }
 }
 

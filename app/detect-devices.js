@@ -15,6 +15,12 @@ function updateAccelerometerChange(target, sensor, x, y, z) {
     });
 }
 
+function updateGyroChange(target, sensor, x, y, z) {
+    target.emit('GYRO_CHANGE', {
+        sensorId: sensor.getId(), x, y, z
+    });
+}
+
 function updateSensors(target) {
     target.emit('UPDATE_SENSORS', sensors.map(sensor => sensor.getId()));
 }
@@ -24,11 +30,10 @@ function discoverDevice(deviceID) {
 }
 
 function getDataFromSensor(outCallback) {
-    var accelerometerData;
-    var gyroData;
+    let accelerometerData;
+    let gyroData;
 
-    var sensorTag = sensors[0].sensorTag;
-
+    const sensorTag = sensors[0].sensorTag;
     async.series([
         function(callback) {
             sensorTag.readAccelerometer(function(error, x, y, z) {
@@ -77,8 +82,13 @@ function onDiscover(sensorTag) {
         sensor.start();
 
         sensor.on('accelerometerChange', (x, y, z) => {
-            console.log('accelerometerChange', "X: " + x, "Y: " + y, "Z: "+ z);
+            console.log('Accel - ', "X: " + x, "Y: " + y, "Z: "+ z);
             updateAccelerometerChange(io, sensor, x, y, z);
+        });
+
+        sensor.on('gyroscopeChange', (x, y, z) => {
+            console.log('Gyro - ', "X: " + x, "Y: " + y, "Z: "+ z);
+            updateGyroChange(io, sensor, x, y, z);
         });
 
         sensor.on('buttonPress', () => {
@@ -96,5 +106,4 @@ module.exports = {
     updateSensors: updateSensors,
     discoverDevice: discoverDevice,
     getDataFromSensor: getDataFromSensor
-
 };
