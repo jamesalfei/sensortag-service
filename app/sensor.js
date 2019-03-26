@@ -1,6 +1,5 @@
 const EventEmitter = require('events');
 const MovingAverage = require('moving-average');
-const logger = require('./logger');
 
 const accelerometerPeriod = 200;
 const accelerometerPrecision = 2;
@@ -51,14 +50,11 @@ class Sensor extends EventEmitter {
                 x = this.movingAverageX.movingAverage().toFixed(accelerometerPrecision);
                 y = this.movingAverageY.movingAverage().toFixed(accelerometerPrecision);
                 z = this.movingAverageZ.movingAverage().toFixed(accelerometerPrecision);
-                logger.debug('Sensor - on accelerometerChange', x, y, z);
                 _this.emit("accelerometerChange", x, y, z);
             }
         });
 
         this.sensorTag.on('simpleKeyChange', function (left, right, _) {
-            // console.log(this.id, this.uuid, left, right, reedRelay);
-            logger.debug('Sensor - on simpleKeyChange');
             if (right) {
                 _this.emit("buttonPress");
             }
@@ -74,31 +70,31 @@ class Sensor extends EventEmitter {
         this.hasStarted = true;
 
         this.sensorTag.enableAccelerometer(function (error) {
-            logger.debug('Sensor.start - set enableAccelerometer');
+            console.debug('Sensor.start - set enableAccelerometer');
 
             if (error) {
                 console.error(error);
             }
 
             _this.sensorTag.setAccelerometerPeriod(accelerometerPeriod, function (error) {
-                logger.debug('Sensor.start - set accelerometerPeriod');
+                console.debug('Sensor.start - set accelerometerPeriod');
                 if (error) {
-                    logger.error(error);
+                    console.error(error);
                 }
 
                 _this.sensorTag.notifyAccelerometer(function (error) {
                     console.log('Sensor.start - set notifyAccelerometer');
                     if (error) {
-                        logger.error(error);
+                        console.error(error);
                     }
                     safeCallback(callback);
                 });
             });
 
             _this.sensorTag.notifySimpleKey(function (error) {
-                logger.debug('Sensor.start - set notifySimpleKey');
+                console.debug('Sensor.start - set notifySimpleKey');
                 if (error) {
-                    logger.error(error);
+                    console.error(error);
                 }
             });
         });

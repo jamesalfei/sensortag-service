@@ -1,13 +1,29 @@
-const SensorTag = require('sensortag');
 const index = require('../operations');
+const devices = require('../detect-devices');
+
+//POST up to endpoint
+//CONNECT to sensor
+//GET historic data
+//DISCONNECT from sensor
 
 module.exports = function(app) {
-    app.post('/connectToDevices', (req, res) => {
-        SensorTag.discoverAll(index.onDiscover);
-        res.send("Hello");
+    app.post('/start', (req, res) => {
+        index.connectSensor("5fbb37b58ad14d25babfbf6b66cdb40c");
+        res.send("Connecting to FlyingLow sensor...");
     });
 
-    app.get('/device/:id', (req, res) => {
-        res.send("SomeData");
+    app.post('/stop', (req, res) => {
+        index.disconnectSensors();
+        res.send("Disconnected from SensorTag");
+    });
+
+    app.get('/data', (req, res) => {
+        index.getDataFromSensors(function (accelerometer, gyro) {
+            const data = {
+                accelerometer: accelerometer,
+                gyro: gyro
+            };
+            res.send(data);
+        });
     });
 };
