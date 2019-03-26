@@ -4,7 +4,7 @@ const MovingAverage = require('moving-average');
 const accelerometerPeriod = 200;
 const accelerometerPrecision = 2;
 const movingAverageTimeInterval = 2000;
-const accelerometerUpdateMinInterval = 100;
+const sensorUpdatePeriod= 1000;
 
 const safeCallback = function (callback) {
     if (typeof callback == 'function') {
@@ -23,13 +23,21 @@ class Sensor extends EventEmitter {
         this.rightButtonPressed = false;
         this.addListeners();
         this.accelerometerUpdateTimestamp = 0;
+        this.gyroUpdateTimestamp = 0;
         this.movingAverageX = MovingAverage(movingAverageTimeInterval);
         this.movingAverageY = MovingAverage(movingAverageTimeInterval);
         this.movingAverageZ = MovingAverage(movingAverageTimeInterval);
+        this.movingAverageXGyro = MovingAverage(movingAverageTimeInterval);
+        this.movingAverageYGyro = MovingAverage(movingAverageTimeInterval);
+        this.movingAverageZGyro = MovingAverage(movingAverageTimeInterval);
     }
 
     getId() {
         return this.sensorTag.uuid;
+    }
+
+    getPrecision() {
+        return accelerometerPrecision;
     }
 
     addListeners() {
@@ -45,7 +53,7 @@ class Sensor extends EventEmitter {
             this.movingAverageX.push(timestamp, x);
             this.movingAverageY.push(timestamp, y);
             this.movingAverageZ.push(timestamp, z);
-            if (timestamp - this.accelerometerUpdateTimestamp > accelerometerUpdateMinInterval) {
+            if (timestamp - this.accelerometerUpdateTimestamp > sensorUpdatePeriod) {
                 this.accelerometerUpdateTimestamp = timestamp;
                 x = this.movingAverageX.movingAverage().toFixed(accelerometerPrecision);
                 y = this.movingAverageY.movingAverage().toFixed(accelerometerPrecision);
@@ -55,7 +63,17 @@ class Sensor extends EventEmitter {
         });
 
         this.sensorTag.on('gyroscopeChange', (x, y, z) => {
-            _this.emit("gyroscopeChange", x, y, z);
+            const timestamp = Date.now();
+            this.movingAverageXGyro.push(timestamp, x);
+            this.movingAverageYGyro.push(timestamp, y);
+            this.movingAverageZGyro.push(timestamp, z);
+            if (timestamp - this.gyroUpdateTimestamp > sensorUpdatePeriod) {
+                this.gyroUpdateTimestamp = timestamp;
+                x = this.movingAverageXGyro.movingAverage().toFixed(accelerometerPrecision);
+                y = this.movingAverageYGyro.movingAverage().toFixed(accelerometerPrecision);
+                z = this.movingAverageZGyro.movingAverage().toFixed(accelerometerPrecision);
+                _this.emit("gyroscopeChange", x, y, z);
+            }
         });
 
         this.sensorTag.on('simpleKeyChange', function (left, right, _) {

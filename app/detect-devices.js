@@ -2,6 +2,7 @@ const io = require('socket.io')();
 const SensorTag = require('sensortag');
 const Sensor = require('./sensor');
 const async = require('async');
+const sprintf=require("sprintf-js").sprintf;
 
 const sensors = [];
 
@@ -33,27 +34,23 @@ function getDataFromSensor(outCallback) {
     let accelerometerData;
     let gyroData;
 
-    const sensorTag = sensors[0].sensorTag;
+    const sensorTag = sensors[0];
     async.series([
         function(callback) {
-            sensorTag.readAccelerometer(function(error, x, y, z) {
-                accelerometerData = {
-                    x: x,
-                    y: y,
-                    z: z
-                };
-                callback();
-            });
+            accelerometerData = {
+                x: sensorTag.movingAverageX.movingAverage().toFixed(sensorTag.getPrecision()),
+                y: sensorTag.movingAverageY.movingAverage().toFixed(sensorTag.getPrecision()),
+                z: sensorTag.movingAverageZ.movingAverage().toFixed(sensorTag.getPrecision())
+            };
+            callback();
         },
-        function(callback) {
-            sensorTag.readGyroscope(function (error, x, y, z) {
-                gyroData = {
-                    x: x,
-                    y: y,
-                    z: z
-                };
-                callback();
-            });
+        function (callback) {
+            gyroData = {
+                x: sensorTag.movingAverageXGyro.movingAverage().toFixed(sensorTag.getPrecision()),
+                y: sensorTag.movingAverageYGyro.movingAverage().toFixed(sensorTag.getPrecision()),
+                z: sensorTag.movingAverageZGyro.movingAverage().toFixed(sensorTag.getPrecision())
+            };
+            callback();
         },
         function() {
             outCallback(accelerometerData, gyroData)
@@ -82,12 +79,12 @@ function onDiscover(sensorTag) {
         sensor.start();
 
         sensor.on('accelerometerChange', (x, y, z) => {
-            console.log('Accel - ', "X: " + x, "Y: " + y, "Z: "+ z);
+            console.log(sprintf("Accel => X: %1s Y: %2s Z: %3s", x, y, z));
             updateAccelerometerChange(io, sensor, x, y, z);
         });
 
         sensor.on('gyroscopeChange', (x, y, z) => {
-            console.log('Gyro - ', "X: " + x, "Y: " + y, "Z: "+ z);
+            console.log(sprintf("Gyro  => X: %1s Y: %2s Z: %3s", x, y, z));
             updateGyroChange(io, sensor, x, y, z);
         });
 

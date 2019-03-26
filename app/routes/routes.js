@@ -17,6 +17,18 @@ module.exports = function(app) {
         res.send("Disconnected from SensorTag");
     });
 
+    app.post('/record', (req, res) => {
+        console.log('Recording Start');
+        res.send("Recording Start");
+    });
+
+    app.post('/recordStop', (req, res) => {
+        console.log('Recording stopped');
+        res.send("Recording stopped");
+    });
+
+
+
     app.get('/data', (req, res) => {
         index.getDataFromSensors(function (accelerometer, gyro) {
             const data = {
